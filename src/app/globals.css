@@ -1,0 +1,264 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* pt-24 tiap section (96px) sudah cukup membersihkan navbar fixed (~72px).
+       Hindari menumpuk offset agar judul section tidak mendarat terlalu ke bawah. */
+    scroll-padding-top: 0;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #145374;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00334e;
+}
+
+/* ==== Certificate marquee (About > General) ==== */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-left 52s linear infinite;
+}
+
+.marquee-track--reverse {
+  animation-name: marquee-right;
+}
+
+.marquee-group {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding-right: 16px;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Hormati prefers-reduced-motion: marquee tetap dua baris, hanya diperlambat.
+   Bukan mode statis/wrap — itu justru membuat tata letak berantakan. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .marquee-track--reverse {
+    animation-duration: 120s !important;
+  }
+}
+
+/* ==== Tech Stack marquee (dua baris logo) ==== */
+.tech-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}
+
+.tech-marquee-track {
+  display: flex;
+  width: max-content;
+  flex-wrap: nowrap;
+  will-change: transform;
+  animation: marquee-left 38s linear infinite;
+}
+
+.tech-marquee-track--reverse {
+  animation-name: marquee-right;
+  animation-duration: 43s;
+}
+
+.tech-marquee-group {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding-right: 40px;
+}
+
+.tech-marquee:hover .tech-marquee-track,
+.tech-marquee:focus-within .tech-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Logo: kotak persegi seragam; default grayscale pudar */
+.tech-logo-wrap {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tech-logo {
+  --glow-color: rgba(34, 184, 232, 0.6);
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: grayscale(1) contrast(1.05);
+  opacity: 0.5;
+  transition:
+    filter 300ms ease,
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+.tech-logo.is-active,
+.tech-logo:hover {
+  filter: grayscale(0) drop-shadow(0 0 14px var(--glow-color));
+  opacity: 1;
+}
+
+.tech-logo:hover {
+  transform: scale(1.1);
+}
+
+/* Mobile (<640px): logo 52px, gap 24px, animasi sedikit lebih cepat */
+@media (max-width: 639px) {
+  .tech-logo-wrap {
+    width: 52px;
+    height: 52px;
+  }
+  .tech-marquee-group {
+    gap: 24px;
+    padding-right: 24px;
+  }
+  .tech-marquee-track {
+    animation-duration: 28s;
+  }
+  .tech-marquee-track--reverse {
+    animation-duration: 32s;
+  }
+}
+
+/* ==== Experience accordion: grid-template-rows + rotasi chevron ==== */
+.exp-accordion {
+  transition: grid-template-rows 350ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.exp-chevron {
+  transition: transform 300ms ease;
+}
+
+/* Galeri horizontal di kartu experience */
+.exp-gallery-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+.exp-gallery-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+.exp-gallery-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.exp-gallery-scroll::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 9999px;
+}
+.exp-gallery-scroll::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* prefers-reduced-motion: matikan transisi tinggi/rotasi */
+@media (prefers-reduced-motion: reduce) {
+  .exp-accordion {
+    transition: none !important;
+  }
+  .exp-chevron {
+    transition: none !important;
+  }
+}
+
+/* ==== Floating pill navbar ==== */
+/* Judul section tidak tertutup navbar fixed */
+section[id] {
+  scroll-margin-top: 10px;
+}
+
+/* Pulse ring tombol Get In Touch (scale 1 -> 1.25, opacity 0.5 -> 0) */
+@keyframes nav-pulse {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(238, 111, 87, 0.45);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1.25);
+    box-shadow: 0 0 0 14px rgba(238, 111, 87, 0);
+    opacity: 0;
+  }
+}
+
+.nav-pulse {
+  animation: nav-pulse 2.2s ease-out infinite;
+}
+
+/* Matikan pulse saat tombol di-hover */
+a:hover > .nav-pulse {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-pulse {
+    animation: none !important;
+  }
+}
